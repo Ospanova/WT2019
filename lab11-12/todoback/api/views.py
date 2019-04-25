@@ -1,34 +1,90 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from api.models import Task, TaskList
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from api.models import TaskList, Task
+from api.serializers import TaskListSerializer, TaskSerializer
 
+
+@csrf_exempt
 def task_lists(request):
-    task_lists = TaskList.objects.all()
-    json_task_lists = [tl.to_json() for tl in task_lists]
-    return JsonResponse(json_task_lists, safe=False)
+    if request.method == 'GET':
+        task_lists = TaskList.objects.all()
+        serializer = TaskListSerializer(task_lists, many=True)
+        return JsonResponse(serializer.data, safe=False, status=200)
 
-def task_list(request, pk):
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TaskListSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors)
+
+@csrf_exempt
+def task_list_details(request, pk):
     try:
         task_list = TaskList.objects.get(id=pk)
     except TaskList.DoesNotExist as e:
-        return JsonResponse({'error': str(e)}, safe=False)
-    
-    return JsonResponse(task_list.to_json())
+        return JsonResponse({'error': str(e)})
 
+    if request.method == 'GET':
+        serializer = TaskListSerializer(task_list)
+        return JsonResponse(serializer.data, status=200)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = TaskListSerializer(task_list, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors)
+
+    elif request.method == 'DELETE':
+        task_list.delete()
+        return JsonResponse({}, status=204)
+
+
+@csrf_exempt
 def task_list_tasks(request, pk):
     try:
         task_list = TaskList.objects.get(id=pk)
     except TaskList.DoesNotExist as e:
-        return JsonResponse({'error': str(e)}, safe=False)
-    
-    tasks = task_list.task_set.all()
-    json_tasks = [t.to_json() for t in tasks]
-    return JsonResponse(json_tasks, safe=False)
+        return JsonResponse({'error': str(e)})
 
-def task(request, pk):
+    if request.method == 'GET':
+        tasks = task_list.tasks.all()
+        serializer = TaskSerializer(tasks, many=True)
+        return JsonResponse(serializer.data, safe=False, status=200)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TaskSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors)
+
+
+@csrf_exempt
+def task_details(request, pk):
     try:
         task = Task.objects.get(id=pk)
     except Task.DoesNotExist as e:
-        return JsonResponse({'error': str(e)}, safe=False)
-    
-    return JsonResponse(task.to_json_detail())
+        return JsonResponse({'error': str(e)})
+
+    if request.method == 'GET':
+        serializer = TaskSerializer(task)
+        return JsonResponse(serializer.data, status=200)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = TaskSerializer(instance=task, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors)
+
+    elif request.method == 'DELETE':
+        task.delete()
+        return JsonResponse({}, status=204)
