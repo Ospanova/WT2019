@@ -1,0 +1,96 @@
+<div id="accordion">
+  <li class="list-group-item active">
+    Task lists
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" (click)="setTaskListCreate()">Create</button>
+  </li>
+  <!-- TASK LIST MODAL -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Task List</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Name:</label>
+                <input #name type="text" class="form-control" id="recipient-name">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="performTaskListRequest(name.value)">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- TASK LIST MODAL END -->
+  <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Task</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Name:</label>
+                <input #task_name type="text" class="form-control" id="recipient-name">
+                <label for="recipient-name" class="col-form-label">Date created:</label>
+                <input #created type="text" class="form-control" id="recipient-name">
+                <label for="recipient-name" class="col-form-label">Date due:</label>
+                <input #due type="text" class="form-control" id="recipient-name">
+                <label for="recipient-name" class="col-form-label">Status:</label>
+                <input #status type="text" class="form-control" id="recipient-name">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="performTaskRequest(task_name.value, created.value, due.value, status.value)">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="card" *ngFor="let t of taskLists">
+    <div class="card-header" [id]="'heading' + t.id">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" [attr.data-target]="'#collapse' + t.id" aria-expanded="false" [attr.aria-controls]="'collapse' + t.id" (click)="getTasks(t.id)">
+          {{t.name}}
+        </button>
+        <span class="float-right">
+          <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#taskModal" (click)="setTaskCreate(t.id)">Create Task</button>
+          <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal" (click)="setTaskListUpdate(t.id)">Update</button>
+          <button type="button" class="btn btn-outline-danger" (click)="deleteTaskList(t.id)">Delete</button>
+        </span>
+      </h5>
+    </div>
+    <div [id]="'collapse' + t.id" class="collapse show" [attr.aria-labelledby]="'heading' + t.id" data-parent="#accordion">
+      <div class="card-body" *ngFor="let c of tasks">
+          <a class="" data-toggle="collapse" [href]="'#collapse' + c.name" role="button" aria-expanded="false" aria-controls="'collapse' + c.name" (click)="getTask(c)">
+            {{c.name}}
+          </a>
+          <span class="float-right">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#taskModal" (click)="setTaskUpdate(c.id, t.id)">Update</button>
+              <button type="button" class="btn btn-danger" (click)="deleteTask(c.id)">Delete</button>
+            </span>
+          <div class="collapse" [id]="'collapse' + c.name">
+            <div class="card card-body">
+              ID: {{task?.id}} <br>
+              Name: {{task?.name}} <br>
+              Creation date: {{task?.created_at}} <br>
+              Due date: {{task?.due_on}} <br>
+              Status: {{task?.status}}
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
