@@ -47,7 +47,6 @@ class CinemaSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(required=True)
     image_url = serializers.CharField(required=True)
-    address = serializers.CharField(required=True)
     contact = serializers.CharField(required=True)
     location = LocationSerializer(read_only=True)
 
@@ -78,7 +77,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     text = serializers.CharField(required=True)
     user = UserSerializer(read_only=True)
-    movie = MovieSerializer(read_only=True)
+    cinema = CinemaSerializer(read_only=True)
 
     class Meta:
         model = Review

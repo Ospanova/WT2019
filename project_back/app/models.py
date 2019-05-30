@@ -8,7 +8,7 @@ from django.db import models
 
 class Location(models.Model):
     name = models.CharField(max_length=50)
-    adress = models.TextField(max_length=100)
+    address = models.TextField(max_length=100)
 
 
 class Cinema(models.Model):
@@ -16,13 +16,13 @@ class Cinema(models.Model):
     image_url = models.CharField(max_length=255,
                                  default='https://experienceluxury.co/wp-content/uploads/2016/08/private-cinema.jpg')
     contact = models.CharField(max_length=100, default='+7 (702) 232 78 87')
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='cinemas')
 
 
 class Movie(models.Model):
     name = models.CharField(max_length=50)
     price = models.IntegerField(default=1500)
-    cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE)
+    cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE,related_name='movies')
     image_url = models.CharField(max_length=255,
                                  default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ6gu_chwEZr3JKjCwec5bDeh8CdeVEz3iqvhzL6MYAa6bb4rU')
 
@@ -55,7 +55,7 @@ class Review(models.Model):
                               related_name='reviews')
 
     def __str__(self):
-        return '{}: {}'.format(self.user, self.movie)
+        return '{}: {}'.format(self.user, self.cinema)
 
 
 class FilmManager(models.Manager):

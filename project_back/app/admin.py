@@ -4,7 +4,7 @@ from app.models import Location, Cinema, Movie, Review, FilmManager, Ticket
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'adress')
+    list_display = ('id', 'name', 'address')
 
 
 @admin.register(Cinema)
@@ -14,7 +14,7 @@ class CinemaAdmin(admin.ModelAdmin):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'cinema','price', 'image_url')
+    list_display = ('id', 'name', 'cinema', 'price', 'image_url')
 
 
 @admin.register(Ticket)
